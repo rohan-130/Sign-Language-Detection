@@ -28,12 +28,15 @@ class HandTracker:
     def position_finder(self, img, handNo=0, draw=True):
         lmlist = []
         if self.results.multi_hand_landmarks:
+            cx = None
             Hand = self.results.multi_hand_landmarks[handNo]
             for id, lm in enumerate(Hand.landmark):
                 h, w, c = img.shape
                 cx, cy = int(lm.x * w), int(lm.y * h)
                 lmlist.append([id, cx, cy])
+            h, w, c = img.shape
+            cx, cy = int(Hand.landmark[8].x * w), int(Hand.landmark[8].y * h)
             if draw:
                 cv2.circle(img, (cx, cy), 15, (255, 0, 255), cv2.FILLED)
-
+                return cx, cy
         return lmlist

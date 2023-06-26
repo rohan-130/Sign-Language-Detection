@@ -2,6 +2,7 @@ import pickle
 import time
 import cv2
 from tracker import HandTracker
+from words import Words
 
 
 def train_word(word_name, wait_time=3, train_time=4, num_iterations=3, pickle_file="words.pkl"):
@@ -35,19 +36,24 @@ def train_word(word_name, wait_time=3, train_time=4, num_iterations=3, pickle_fi
                 start_time = None
                 i += 1
                 for j in range(len(new_result) - 1):
-                    new_result[j] = new_result[j + 1] - new_result[j]
+                    new_result[j] = (new_result[j + 1][0] - new_result[j][0], new_result[j + 1][1] - new_result[j][1])
                 new_result = new_result[:-1]
-                answer = str(words.check_word(new_result))
+                try:
+                    answer = str(words.check_word(new_result))
+                except:
+                    print("Not detected")
                 result.append(new_result)
                 new_result = []
         else:
-            val = lmList[4][1]  # , lmList[4][2]
+            val = lmList  # lmList[10][1], lmList[10][2]
             new_result.append(val)
             cv2.putText(image, str(val), (50, 100), 0, 1, (0, 0, 255), 1, cv2.LINE_AA)
         cv2.imshow("Video", image)
         cv2.waitKey(1)
+    print(result)
     words.update_word({word_name: result})
-    with open('words.pkl', 'wb') as file1:
+    print(words.all_words)
+    with open(pickle_file, 'wb') as file1:
         pickle.dump(words, file1, pickle.HIGHEST_PROTOCOL)
 
 
@@ -82,14 +88,13 @@ def test_words(wait_time=3, train_time=4, pickle_file="words.pkl"):
                 start_time = None
                 i += 1
                 for j in range(len(new_result) - 1):
-                    new_result[j] = new_result[j + 1] - new_result[j]
+                    new_result[j] = (new_result[j + 1][0] - new_result[j][0], new_result[j + 1][1] - new_result[j][1])
                 new_result = new_result[:-1]
-                answer = str(words.check_word(new_result))
+                answer = words.check_word(new_result)  # [0][:-1]
                 new_result = []
         else:
-            val = lmList[4][1]  # , lmList[4][2]
+            val = lmList  # lmList[4][1], lmList[4][2]
             new_result.append(val)
             cv2.putText(image, str(val), (50, 100), 0, 1, (0, 0, 255), 1, cv2.LINE_AA)
         cv2.imshow("Video", image)
         cv2.waitKey(1)
-
