@@ -109,12 +109,12 @@
                 lineWidth: 2.5
               });
               drawLandmarks(canvasCtx, landmarks, { color: "white", lineWidth: 5, radius: 0.5 });
-              if (count < 100) {
+              if (count < 150) {
                 if (count % 17 == 0) {
                     element.innerHTML =  Math.floor((100 - count) / 20);
                 }
                 count += 1;
-              } else if (count < 250) {
+              } else if (count < 300) {
                 element.innerHTML = [landmarks[8].x*100, landmarks[8].y*100];
                 if (count % 10 == 0) {
                     landmarksArray[newCount] = [landmarks[8].x*100, landmarks[8].y*100];

@@ -197,7 +197,6 @@ def convert(a, prev_avg=None, prev_sd=None, iterations=0):
     sd = [sd1(a_i) for a_i in a]
 
     if prev_avg == avg and prev_sd == sd:
-        print(a, avg, sd)
         return a, avg, sd, iterations
 
     for index in range(len(a) - 1):
@@ -216,7 +215,7 @@ def convert(a, prev_avg=None, prev_sd=None, iterations=0):
             if boundary == 0:
                 for n in a[index + 1][i][:]:
                     if (abs(n - avg[index + 1]) / sd[index + 1]) > (abs(n - avg[index]) / sd[index]):
-                        boundary += 12
+                        boundary += 1
                     else:
                         break
                 if boundary > 0:

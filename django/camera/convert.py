@@ -73,7 +73,7 @@ def viterbi(evidence_vector, states, prior_probs, transition_probs, emission_par
     return sequence, probability
 
 
-def multidimensional_viterbi(evidence_vector, states, prior_probs, transition_probs, emission_paras):
+def multidimensional_viterbi(evidence_vector, states, prior_probs, transition_probs, emission_paras, num_dimensions=2):
     sequence = []
     probability = 0.0
 
@@ -85,11 +85,14 @@ def multidimensional_viterbi(evidence_vector, states, prior_probs, transition_pr
     for i in range(len(states)):
         prior_prob = prior_probs[states[i]]
         prior_prob = math.log(prior_prob) if prior_prob != 0 else -math.inf
-        gaussian_prob_x = gaussian_prob(evidence_vector[0][0], emission_paras[states[i]][0])
-        gaussian_prob_x = math.log(gaussian_prob_x) if gaussian_prob_x != 0 else -math.inf
-        gaussian_prob_y = gaussian_prob(evidence_vector[0][1], emission_paras[states[i]][1])
-        gaussian_prob_y = math.log(gaussian_prob_y) if gaussian_prob_y != 0 else -math.inf
-        nl.append([prior_prob + gaussian_prob_x + gaussian_prob_y] + [0] * (len(evidence_vector) - 1))
+        gaussian_prob_all = []
+        for z in range(num_dimensions):
+            gaussian_prob_all.append(gaussian_prob(evidence_vector[0][z], emission_paras[states[i]][z]))
+            gaussian_prob_all[z] = math.log(gaussian_prob_all[z]) if gaussian_prob_all[z] != 0 else -math.inf
+        gaussian_prob_sum = 0
+        for z in range(num_dimensions):
+            gaussian_prob_sum += gaussian_prob_all[z]
+        nl.append([prior_prob + gaussian_prob_sum] + [0] * (len(evidence_vector) - 1))
 
     for i in range(1, len(evidence_vector)):
         for j in range(len(states)):
@@ -99,16 +102,18 @@ def multidimensional_viterbi(evidence_vector, states, prior_probs, transition_pr
                 best_prev_prob = None
                 k_new = None
                 for k in range(len(states)):
+                    transition_prob_sum = 0
                     try:
-                        transition_prob_x = transition_probs[states[k]][states[j]][0]
-                        transition_prob_x = math.log(transition_prob_x) if transition_prob_x != 0 else -math.inf
-                        transition_prob_y = transition_probs[states[k]][states[j]][1]
-                        transition_prob_y = math.log(transition_prob_y) if transition_prob_y != 0 else -math.inf
+                        transition_prob_all = []
+                        for z in range(num_dimensions):
+                            transition_prob_all.append(transition_probs[states[k]][states[j]][z])
+                            transition_prob_all[z] = math.log(transition_prob_all[z]) if transition_prob_all[z] != 0 else -math.inf
+                            transition_prob_sum += transition_prob_all[z]
                     except:
                         pass
                     if states[j] in transition_probs[states[k]] and (
-                            nl[k][i - 1] + transition_prob_x + transition_prob_y) >= max_val:
-                        max_val = nl[k][i - 1] + transition_prob_x + transition_prob_y
+                            nl[k][i - 1] + transition_prob_sum) >= max_val:
+                        max_val = nl[k][i - 1] + transition_prob_sum
                         best_prev_prob = nl[k][i - 1]
                         k_new = k
                 prev_prob = best_prev_prob
@@ -116,18 +121,21 @@ def multidimensional_viterbi(evidence_vector, states, prior_probs, transition_pr
             elif i >= 1:
                 prev_prob = nl[j][i - 1]
                 prev_state = states[j]
-            gaussian_x = gaussian_prob(evidence_vector[i][0], emission_paras[state][0])
-            gaussian_x = math.log(gaussian_x) if gaussian_x != 0 else -math.inf
-            gaussian_y = gaussian_prob(evidence_vector[i][1], emission_paras[state][1])
-            gaussian_y = math.log(gaussian_y) if gaussian_y != 0 else -math.inf
-            transition_x = transition_probs[prev_state][state][0]
-            transition_x = math.log(transition_x) if transition_x != 0 else -math.inf
-            transition_y = transition_probs[prev_state][state][1]
-            transition_y = math.log(transition_y) if transition_y != 0 else -math.inf
-            nl[j][i] = prev_prob + gaussian_x + gaussian_y + transition_x + transition_y
+            gaussian_all = []
+            gaussian_sum = 0
+            for z in range(num_dimensions):
+                gaussian_all.append(gaussian_prob(evidence_vector[i][z], emission_paras[state][z]))
+                gaussian_all[z] = math.log(gaussian_all[z]) if gaussian_all[z] != 0 else -math.inf
+                gaussian_sum += gaussian_all[z]
+            transition_all = []
+            transition_sum = 0
+            for z in range(num_dimensions):
+                transition_all.append(transition_probs[prev_state][state][z])
+                transition_all[z] = math.log(transition_all[z]) if transition_all[z] != 0 else -math.inf
+                transition_sum += transition_all[z]
+            nl[j][i] = prev_prob + gaussian_sum + transition_sum
     new_s = []
     seq = []
-    old_j = -1
 
     highest_prob = -math.inf
     highest_prob_index = None
@@ -140,7 +148,6 @@ def multidimensional_viterbi(evidence_vector, states, prior_probs, transition_pr
     probability = highest_prob
 
     for i in range(len(evidence_vector) - 2, -1, -1):
-        change_j = None
         highest_prob = -math.inf
         new_highest_prob = -math.inf
         best_state = None
@@ -150,27 +157,27 @@ def multidimensional_viterbi(evidence_vector, states, prior_probs, transition_pr
         for j in range(len(states)):
             if sequence[0] not in transition_probs[states[j]]:
                 continue
-            transition_x = transition_probs[states[j]][sequence[0]][0]
-            transition_x = math.log(transition_x) if transition_x != 0 else -math.inf
-            transition_y = transition_probs[states[j]][sequence[0]][1]
-            transition_y = math.log(transition_y) if transition_y != 0 else -math.inf
-            if (nl[j][i] + transition_x + transition_y) > highest_prob:
-                highest_prob = nl[j][i] + transition_x + transition_y
+            transition_all = []
+            transition_sum = 0
+            for z in range(num_dimensions):
+                transition_all.append(transition_probs[states[j]][sequence[0]][1])
+                transition_all[z] = math.log(transition_all[z]) if transition_all[z] != 0 else -math.inf
+                transition_sum += transition_all[z]
+            if (nl[j][i] + transition_sum) > highest_prob:
+                highest_prob = nl[j][i] + transition_sum
                 new_highest_prob = nl[j][i]
                 best_state = states[j]
-                change_j = j
                 nj = j
                 ni = i
         if best_state:
             sequence = [best_state] + sequence
             new_s = [new_highest_prob] + new_s
-            old_j = change_j
             seq = seq + [(nj, ni)]
 
     if probability == 0:
         return None, 0
 
-    return sequence, probability
+    return sequence, math.e**probability
 
 
 def average(a):

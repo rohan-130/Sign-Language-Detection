@@ -56,7 +56,6 @@ def train_word(request):
         coordinates = request.data.getlist("vector[" + str(i) + "][]")
         vector.append((float(coordinates[0]), float(coordinates[1])))
     vector = vector[:-1]
-    success = 'success'
     try:
         words.update_word({word_name: [vector]})
         success = word_name + " trained " + str(len(words.all_words[word_name])) + " times"
