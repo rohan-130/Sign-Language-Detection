@@ -24,5 +24,5 @@ Run the development web server:
 ````
 python manage.py runserver
 ````
-Open the URL ```http://localhost:8000/train-cam``` to train and ```http://localhost:8000/train-cam``` to predict.
+Open the URL ```http://localhost:8000/train-cam``` to train and ```http://localhost:8000/test-cam``` to predict.
 
