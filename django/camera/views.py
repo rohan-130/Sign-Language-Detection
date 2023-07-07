@@ -11,6 +11,10 @@ from .words import Words
 '''
 words = Words()
 with open('/Users/rohan/Dropbox (GaTech)/sign-language-recognition/asl_recognition/words.pkl', 'wb') as file:
+    pickle.dump(words, file)
+words = Words()
+words.num_dimensions = 12
+with open('/Users/rohan/Documents/sign-language-recognition/django/words1.pkl', 'wb') as file:
     pickle.dump(words, file)'''
 
 

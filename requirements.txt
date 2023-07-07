@@ -1,5 +1,5 @@
-django
 opencv-python
 numpy
 mediapipe
 djangorestframework
+django

@@ -60,7 +60,10 @@ def train_word(word_name, wait_time=3, train_time=4, num_iterations=3, pickle_fi
 def test_words(wait_time=3, train_time=4, pickle_file="words.pkl"):
     with open(pickle_file, 'rb') as file:
         words = pickle.load(file)
-    cap = cv2.VideoCapture(1)
+    try:
+        cap = cv2.VideoCapture(1)
+    except:
+        cap = cv2.VideoCapture(0)
     tracker = HandTracker()
     start_time = None
     new_result = []
@@ -98,3 +101,7 @@ def test_words(wait_time=3, train_time=4, pickle_file="words.pkl"):
             cv2.putText(image, str(val), (50, 100), 0, 1, (0, 0, 255), 1, cv2.LINE_AA)
         cv2.imshow("Video", image)
         cv2.waitKey(1)
+
+
+# print("starting:")
+# test_words(wait_time=3, train_time=4, pickle_file="words.pkl")
