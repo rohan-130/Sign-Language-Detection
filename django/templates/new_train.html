@@ -63,10 +63,10 @@
 
           if (webcamRunning === true) {
             webcamRunning = false;
-            enableWebcamButton.innerText = "ENABLE PREDICTIONS";
+            enableWebcamButton.innerText = "Predictions On";
           } else {
             webcamRunning = true;
-            enableWebcamButton.innerText = "Disable Prediction";
+            enableWebcamButton.innerText = "Disable Webcam";
           }
 
           // getUsermedia parameters.
@@ -105,18 +105,18 @@
           if (results.landmarks) {
             for (const landmarks of results.landmarks) {
               drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {
-                color: "#00FF00",
+                color: "#2F4F4F",
                 lineWidth: 2.5
               });
               drawLandmarks(canvasCtx, landmarks, { color: "white", lineWidth: 5, radius: 0.5 });
-              if (count < 150) {
+              if (count < 100) {
                 if (count % 17 == 0) {
-                    element.innerHTML =  Math.floor((150 - count) / 20);
+                    element.innerHTML =  Math.floor((100 - count) / 20);
                 }
                 count += 1;
-              } else if (count < 300) {
+              } else if (count < 250) {
                 element.innerHTML = [landmarks[8].x*100, landmarks[8].y*100];
-                if (count % 10 == 0) {
+                if (count % 5 == 0) {
                     landmarksArray[newCount] = [landmarks[8].x*100, landmarks[8].y*100];
                     newCount += 1;
                 }
@@ -160,19 +160,24 @@
     </script>
     <title>ASL Train</title>
 </head>
-<body style="background-color: #2d2d30;">
+<style>
+    *:focus {
+    outline:none;
+}
+</style>
+<body style="background-color: #121212; color: #B2BEB5; font-family: monospace;">
     <section>
         <div>
           <div style="position: relative;">
-            <video id="webcam" style="position: absolute; margin-left: 2%; margin-top: 1.5%; width: 850px; height: 640px; border: 1px solid white;" autoplay playsinline></video>
-            <canvas class="output_canvas" id="output_canvas" style="position: absolute; margin-left: 2%; margin-top: 1.5%; width: 850px; height: 640px; border: 1px solid white;"></canvas>
+            <video id="webcam" style="position: absolute; margin-left: 2%; margin-top: 1.5%; width: 850px; height: 640px; border: 1px solid #2F4F4F;" autoplay playsinline></video>
+            <canvas class="output_canvas" id="output_canvas" style="position: absolute; margin-left: 2%; margin-top: 1.5%; width: 850px; height: 640px; border: 1px solid #2F4F4F;"></canvas>
           </div>
             <div style="position: absolute; height: 640px; margin-top: 1.5%; width: 480px; margin-left: 63.5%;">
-                <p id="info" style="color: white; font-size: 20px; text-align: center; margin-top: 0%; color: light-grey;">not detected</p>
-                <p id="para" style="color: white; font-size: 40px; text-align: center; margin-top: 55%; color: white;">train</p>
+                <p id="info" style="color: #B2BEB5; font-size: 20px; text-align: center; margin-top: 0%; color: light-grey;">not detected</p>
+                <p id="para" style="color: #B2BEB5; font-size: 40px; text-align: center; margin-top: 55%;">train</p>
             </div>
-            <input id="wordName" type="text" placeholder="Word Name" style="position: absolute; margin-top: 40%; margin-left: 65%; padding: 15px; border-radius: 0px; border: 0; width: 407px;">
-            <button id="webcamButton" style="position: absolute; margin-top: 40%; margin-left: 87%; padding: 15px; border-radius: 0px; border: 0; background-color: #A59D9B;">
+            <input id="wordName" type="text" placeholder="Word Name" style="position: absolute; margin-top: 40%; margin-left: 65%; padding: 15px; border-radius: 0px; border: 0; width: 407px; font-family: monospace; background-color: #B2BEB5;">
+            <button id="webcamButton" style="cursor: pointer; color: #B2BEB5; position: absolute; margin-top: 40%; margin-left: 87%; padding: 15px; border-radius: 0px; font-family: monospace; background-color: #2F4F4F; border: 0;">
               Enable Webcam
             </button>
         </div>

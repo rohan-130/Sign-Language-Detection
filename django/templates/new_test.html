@@ -106,7 +106,7 @@
           if (results.landmarks) {
             for (const landmarks of results.landmarks) {
               drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {
-                color: "#00FF00",
+                color: "#2F4F4F",
                 lineWidth: 2.5
               });
               drawLandmarks(canvasCtx, landmarks, { color: "white", lineWidth: 5, radius: 0.5 });
@@ -157,21 +157,21 @@
     </script>
     <title>ASL Test</title>
 </head>
-<body style="background-color: #2d2d30;">
+<body style="background-color: #121212; color: #2d2d30; font-family: monospace;">
     <section>
         <div>
           <div style="position: relative;">
-            <video id="webcam" style="position: absolute; margin-left: 2%; margin-top: 1.5%; width: 850px; height: 640px; border: 1px solid white;" autoplay playsinline></video>
-            <canvas class="output_canvas" id="output_canvas" style="position: absolute; margin-left: 2%; margin-top: 1.5%; width: 850px; height: 640px; border: 1px solid white;"></canvas>
+            <video id="webcam" style="position: absolute; margin-left: 2%; margin-top: 1.5%; width: 850px; height: 640px; border: 1px solid #2F4F4F;" autoplay playsinline></video>
+            <canvas class="output_canvas" id="output_canvas" style="position: absolute; margin-left: 2%; margin-top: 1.5%; width: 850px; height: 640px; border: 1px solid #2F4F4F;"></canvas>
           </div>
             <div style="position: absolute; height: 640px; margin-top: 1.5%; width: 480px; margin-left: 63.5%;">
-                <p id="info" style="color: white; font-size: 20px; text-align: center; margin-top: 0%; color: light-grey;">not detected</p>
-                <p id="para" style="color: white; font-size: 40px; text-align: center; margin-top: 55%; color: white;">prediction</p>
+                <p id="info" style="color: #B2BEB5; font-size: 20px; text-align: center; margin-top: 0%; color: light-grey;">not detected</p>
+                <p id="para" style="color: white; color: #B2BEB5; font-size: 40px; text-align: center; margin-top: 55%;">prediction</p>
             </div>
-            <button id="webcamButton" style="position: absolute; margin-top: 40%; margin-left: 72%; padding: 15px; border-radius: 0px; border: 0; width: 130px;">
+            <button id="webcamButton" style="cursor: pointer; position: absolute; margin-top: 40%; margin-left: 72%; padding: 15px; border-radius: 0px; border: 0; width: 130px; height: 65px; font-family: monospace;background-color: #2F4F4F; color: #B2BEB5;">
               Enable Webcam
             </button>
-            <button onClick="hideVideo();" id="hideVideoButton" style="position: absolute; margin-top: 40%; margin-left: 81.5%; padding: 15px; border-radius: 0px; border: 0; width: 130px;">
+            <button onClick="hideVideo();" id="hideVideoButton" style="cursor: pointer; position: absolute; margin-top: 40%; margin-left: 81.5%; padding: 15px; border-radius: 0px; border: 0; width: 130px; height: 65px; font-family: monospace;background-color: #2F4F4F; color: #B2BEB5;">
               Hide Video
             </button>
         </div>

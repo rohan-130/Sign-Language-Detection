@@ -103,5 +103,4 @@ def test_words(wait_time=3, train_time=4, pickle_file="words.pkl"):
         cv2.waitKey(1)
 
 
-# print("starting:")
 # test_words(wait_time=3, train_time=4, pickle_file="words.pkl")
