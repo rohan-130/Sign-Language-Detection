@@ -7,13 +7,14 @@ class Input:
 
 
 class WordsSerializer(serializers.Serializer):
-    all_words = serializers.DictField()
+    # all_words = serializers.DictField()
     states = serializers.ListField()
     prior_probs = serializers.DictField()
     emission_paras = serializers.DictField()
     transition_probs = serializers.DictField()
     state_nums = serializers.ListField()
     num_dimensions = serializers.IntegerField()
+
 
 class InputSerializer(serializers.Serializer):
     vector = serializers.ListField()
