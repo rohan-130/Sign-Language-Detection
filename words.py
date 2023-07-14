@@ -143,19 +143,3 @@ class Words:
         if states:
             return s
         return s[0][:-1]
-
-
-words1 = Words()
-words1.update_word({"new":   [[(1, 1), (2, 2), (3, 3), (4, 4), (5, 5)], [(2, 2), (3, 3), (1, 1), (4, 4), (5, 5)], [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5)]]})
-words1.update_word({"newa":   [[(1, 1), (2, 2), (3, 3), (4, 4), (5, 5)], [(2, 2), (3, 3), (1, 1), (4, 4), (5, 5)], [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5)]]})
-
-words2 = Words()
-words2.num_dimensions = 2
-words2.update_word({"new":   [[(1, 1), (2, 2), (3, 3), (4, 4), (5, 5)], [(2, 2), (3, 3), (1, 1), (4, 4), (5, 5)], [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5)]]})
-words2.update_word({"newa":   [[(1, 1), (2, 2), (3, 3), (4, 4), (5, 5)], [(2, 2), (3, 3), (1, 1), (4, 4), (5, 5)], [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5)]]})
-
-print(words1.transition_probs == words2.transition_probs)
-print(words1.emission_paras == words2.emission_paras)
-print(words1.all_words == words2.all_words)
-print(words1.prior_probs == words2.prior_probs)
-print(words1.states == words2.states)

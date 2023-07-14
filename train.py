@@ -62,7 +62,7 @@ def test_words(wait_time=3, train_time=4, pickle_file="words.pkl"):
         words = pickle.load(file)
     try:
         cap = cv2.VideoCapture(1)
-    except:
+    except Exception as e:
         cap = cv2.VideoCapture(0)
     tracker = HandTracker()
     start_time = None
