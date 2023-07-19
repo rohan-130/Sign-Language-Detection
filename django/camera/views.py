@@ -2,6 +2,8 @@ from django.shortcuts import render
 import pickle
 from rest_framework import status
 from rest_framework.response import Response
+
+from .convert import multidimensional_viterbi
 from .input_words import WordsSerializer, InputSerializer
 from rest_framework.decorators import api_view
 from django.conf import settings
@@ -44,8 +46,6 @@ def check_word(request):
         vector.append((float(coordinates[0]), float(coordinates[1])))
     vector = vector[:-1]
     result = words.check_word(evidence_vector=vector, states=False)
-    print(vector)
-    print("WORD:", result)
     return Response({'word': result}, status=status.HTTP_200_OK)
 
 
@@ -61,7 +61,23 @@ def train_word(request):
         vector.append((float(coordinates[0]), float(coordinates[1])))
     vector = vector[:-1]
     try:
-        words.update_word({word_name: [vector]})
+        if word_name not in words.all_words:
+            highest_prob = -1
+            best_state_nums = None
+            for num_states in range(3, 7):
+                state_nums = []
+                for i in range(num_states):
+                    state_nums.append(str(i + 1))
+                state_nums.append("end")
+                prob = check_new_probability(word_name, vector, num_states)
+                if prob > highest_prob:
+                    highest_prob = prob
+                    best_state_nums = state_nums
+            if highest_prob == -1:
+                raise Exception("too similar to another word")
+            words.update_word({word_name: [vector]}, best_state_nums)
+        else:
+            words.update_word({word_name: [vector]})
         success = word_name + " trained " + str(len(words.all_words[word_name])) + " times"
         with open(str(settings.BASE_DIR) + '/words.pkl', 'wb') as file:
             pickle.dump(words, file)
@@ -70,3 +86,17 @@ def train_word(request):
         success = 'error'
     return Response({'success': success}, status=status.HTTP_200_OK)
 
+
+def check_new_probability(word_name, vector, num_states):
+    with open(str(settings.BASE_DIR) + '/words.pkl', 'rb') as file:
+        words = pickle.load(file)
+    state_nums = []
+    for i in range(num_states):
+        state_nums.append(str(i+1))
+    state_nums.append("end")
+    words.update_word({word_name: [vector]}, state_nums)
+    states, probability = multidimensional_viterbi(vector, words.states, words.prior_probs, words.transition_probs,
+                                                   words.emission_paras)
+    if states[0][:-1] != word_name:
+        probability = -1
+    return probability

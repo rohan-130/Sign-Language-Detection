@@ -12,24 +12,26 @@ class Words:
         self.state_nums = ["1", "2", "3", "end"]
         self.num_dimensions = 2
 
-    def update_word(self, input_words):
+    def update_word(self, input_words, state_nums=None):
+        if not state_nums:
+            state_nums = self.state_nums
         for word in input_words:
             if word not in self.all_words:
                 self.all_words[word] = []
-                for state_num in self.state_nums:
+                for state_num in state_nums:
                     self.states.append(word + state_num)
                     self.emission_paras[word + state_num] = [(None, None)] * self.num_dimensions
                     self.transition_probs[word + state_num] = {}
-                    for state_num2 in self.state_nums:
+                    for state_num2 in state_nums:
                         self.transition_probs[word + state_num][word + state_num2] = (0,) * self.num_dimensions
             for vector in input_words[word]:
                 self.all_words[word].append(vector)
 
         # Change all prior probs in self.prior_probs and add new ones
         for word in self.all_words:
-            self.prior_probs[word + self.state_nums[0]] = 1.0 / (
-                    float(len(self.states)) / len(self.state_nums))  # 1 / number of words
-            for state_num in self.state_nums[1:]:
+            self.prior_probs[word + state_nums[0]] = 1.0 / (
+                    float(len(self.states)) / len(state_nums))  # 1 / number of words
+            for state_num in state_nums[1:]:
                 self.prior_probs[word + state_num] = 0
 
         for word in input_words:
@@ -47,13 +49,13 @@ class Words:
             for z in range(self.num_dimensions):
                 all_results[z] = divide(all_vectors[z])
                 all_results[z] = convert(all_results[z])
-            for i in range(len(self.state_nums) - 1):
-                self.emission_paras[word + self.state_nums[i]] = []
+            for i in range(len(state_nums) - 1):
+                self.emission_paras[word + state_nums[i]] = []
                 for z in range(self.num_dimensions):
-                    self.emission_paras[word + self.state_nums[i]].append((all_results[z][1][i], all_results[z][2][i]))
+                    self.emission_paras[word + state_nums[i]].append((all_results[z][1][i], all_results[z][2][i]))
             for z in range(self.num_dimensions):
                 all_results[z] = all_results[z][0]
-            for i in range(len(self.state_nums) - 1):
+            for i in range(len(state_nums) - 1):
                 all_avg = [0] * self.num_dimensions
                 for j in range(len(all_results[0][i])):
                     all_vector_states = []

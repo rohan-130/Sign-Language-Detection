@@ -246,6 +246,7 @@ def convert(a, prev_avg=None, prev_sd=None, iterations=0):
     return convert(a, prev_avg=avg, prev_sd=sd, iterations=iterations + 1)
 
 
+# a = [[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6]]
 def divide(evidence_vectors):
     result = [[], [], []]
 
@@ -255,4 +256,20 @@ def divide(evidence_vectors):
         result[0] += [vector[:index_1]]
         result[1] += [vector[index_1:index_2]]
         result[2] += [vector[index_2:]]
+    return result
+
+def divide2(evidence_vectors, num_states):
+    result = []
+    for i in range(num_states):
+        result.append([])
+
+    for vector in evidence_vectors:
+        index = [0]
+        prev_index = 0
+        for i in range(num_states - 1):
+            prev_index = prev_index + round(len(vector) / num_states)
+            index.append(prev_index)
+        index.append(len(vector))
+        for i in range(num_states):
+            result[i] += [vector[index[i]:index[i+1]]]
     return result
