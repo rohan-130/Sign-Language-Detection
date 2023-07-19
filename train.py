@@ -8,7 +8,7 @@ from words import Words
 def train_word(word_name, wait_time=3, train_time=4, num_iterations=3, pickle_file="words.pkl"):
     with open(pickle_file, 'rb') as file:
         words = pickle.load(file)
-    cap = cv2.VideoCapture(1)
+    cap = cv2.VideoCapture(0)
     tracker = HandTracker()
     start_time = None
     new_result = []
@@ -57,13 +57,10 @@ def train_word(word_name, wait_time=3, train_time=4, num_iterations=3, pickle_fi
         pickle.dump(words, file1, pickle.HIGHEST_PROTOCOL)
 
 
-def test_words(wait_time=3, train_time=4, pickle_file="words.pkl"):
+def check_words(wait_time=3, train_time=4, pickle_file="words.pkl"):
     with open(pickle_file, 'rb') as file:
         words = pickle.load(file)
-    try:
-        cap = cv2.VideoCapture(1)
-    except Exception as e:
-        cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(0)
     tracker = HandTracker()
     start_time = None
     new_result = []
@@ -103,4 +100,8 @@ def test_words(wait_time=3, train_time=4, pickle_file="words.pkl"):
         cv2.waitKey(1)
 
 
-# test_words(wait_time=3, train_time=4, pickle_file="words.pkl")
+# train_word('sleep', wait_time=2, train_time=3, num_iterations=2, pickle_file="words.pkl")
+# train_word('hello', wait_time=2, train_time=3, num_iterations=2, pickle_file="words.pkl")
+# train_word('gift', wait_time=2, train_time=3, num_iterations=2, pickle_file="words.pkl")
+# train_word('dizzy', wait_time=2, train_time=3, num_iterations=2, pickle_file="words.pkl")
+check_words(wait_time=3, train_time=4, pickle_file="words.pkl")
