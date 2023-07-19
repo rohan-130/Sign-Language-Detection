@@ -2,6 +2,8 @@
 
 sign-language-recognition is a web app that uses Hidden Markov Models to train and predict gestures. It uses a multidimensional Viterbi Trellis to predict a word using hand landmark data from MediaPipe. Words can be trained through the REST API implemented to access the Viterbi Trellis and the algorithm that divides training vectors into states. The API is used in the static webpages in ```django/templates``` using AJAX.
 
+https://github.com/rohan-130/sign-language-recognition/assets/82863394/03717661-28a6-40c6-b113-dda1c6e4519b
+
 #### Words
 The ```Words``` class stores the training vectors of all words trained, and every time ```Words.update_word()``` is called, states, prior_probs, emission_paras, and transition_probs are updated to include the new word or add training vectors to a trained word. ```Words.num_dimensions``` stores the number of data points and dimensions the Words object should store. It is also used to check a vector using the Viterbi Trellis. The Pickle library is used to store a Words object in the main file as well as in the Django project as a ```.pkl``` file.
 #### MediaPipe
