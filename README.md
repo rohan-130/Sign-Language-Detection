@@ -1,6 +1,6 @@
 # sign-language-recognition
 
-sign-language-recognition is a web app that uses Hidden Markov Models to train and predict gestures. It uses a multidimensional Viterbi Trellis to predict a word using hand landmark data from MediaPipe. Words can be trained through the REST API implemented to access the Viterbi Trellis and the algorithm that divides training vectors into states. The API is used in the static webpages in ```django/templates``` using AJAX.
+sign-language-recognition is a web app that uses Hidden Markov Models to train and predict gestures. It uses a multidimensional Viterbi Trellis to predict a word using hand landmark data from MediaPipe. Words can be trained through the REST API implemented to access the Viterbi Trellis and the algorithm that divides training vectors into states. The API is used in the static webpages in ```django/templates``` using AJAX. For the first training vector of each word, the number of states that returns the highest probability is used.
 
 https://github.com/rohan-130/sign-language-recognition/assets/82863394/03717661-28a6-40c6-b113-dda1c6e4519b
 
