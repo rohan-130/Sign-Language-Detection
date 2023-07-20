@@ -1,4 +1,4 @@
-from .convert import multidimensional_viterbi, divide, convert
+from .convert import multidimensional_viterbi, divide2, convert
 import pickle
 
 
@@ -11,10 +11,19 @@ class Words:
         self.transition_probs = {}
         self.state_nums = ["1", "2", "3", "end"]
         self.num_dimensions = 2
+        self.word_state_nums = 0
+
+    def update_old_state_nums(self):
+        self.word_state_nums = {}
+        for word in self.all_words:
+            if word not in self.word_state_nums:
+                self.word_state_nums[word] = ["1", "2", "3", "end"]
 
     def update_word(self, input_words, state_nums=None):
+        if not self.word_state_nums:
+            self.update_old_state_nums()
         if not state_nums:
-            state_nums = self.state_nums
+            state_nums = ["1", "2", "3", "end"]
         for word in input_words:
             if word not in self.all_words:
                 self.all_words[word] = []
@@ -47,7 +56,7 @@ class Words:
                         (all_vectors[z])[i].append(tup[z])
             all_results = [[]] * self.num_dimensions
             for z in range(self.num_dimensions):
-                all_results[z] = divide(all_vectors[z])
+                all_results[z] = divide2(all_vectors[z], len(state_nums)-1)
                 all_results[z] = convert(all_results[z])
             for i in range(len(state_nums) - 1):
                 self.emission_paras[word + state_nums[i]] = []

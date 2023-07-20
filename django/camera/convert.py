@@ -8,7 +8,7 @@ def gaussian_prob(x, para_tuple):
         return 0.0
 
     mean, std = para_tuple
-    gaussian_percentile = (2 * np.pi * std ** 2) ** -0.5 * np.exp(-(x - mean) ** 2 / (2 * std ** 2))
+    gaussian_percentile = (2 * np.pi * (std+0.01) ** 2) ** -0.5 * np.exp(-(x - mean) ** 2 / (2 * (std+0.01) ** 2))
     return gaussian_percentile
 
 

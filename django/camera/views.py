@@ -32,6 +32,7 @@ def train_cam(request):
 def get_all_words(request):
     with open(str(settings.BASE_DIR) + '/words.pkl', 'rb') as file:
         words = pickle.load(file)
+    # words.update_old_state_nums()
     return Response(WordsSerializer(words).data, status=status.HTTP_200_OK)
 
 
