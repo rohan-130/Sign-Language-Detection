@@ -10,6 +10,7 @@ from django.conf import settings
 from .words import Words
 
 
+
 '''
 words = Words()
 with open('/Users/rohan/Documents/sign-language-recognition/django/words.pkl', 'wb') as file:
@@ -61,6 +62,7 @@ def train_word(request):
         coordinates = request.data.getlist("vector[" + str(i) + "][]")
         vector.append((float(coordinates[0]), float(coordinates[1])))
     vector = vector[:-1]
+    best_state_nums = 0
     try:
         if word_name not in words.all_words:
             highest_prob = -1
@@ -79,7 +81,7 @@ def train_word(request):
             words.update_word({word_name: [vector]}, best_state_nums)
         else:
             words.update_word({word_name: [vector]})
-        success = word_name + " trained " + str(len(words.all_words[word_name])) + " times"
+        success = word_name + " trained " + str(len(words.all_words[word_name])) + " times" + " " + str(best_state_nums)
         with open(str(settings.BASE_DIR) + '/words.pkl', 'wb') as file:
             pickle.dump(words, file)
     except Exception as e:
@@ -92,12 +94,20 @@ def check_new_probability(word_name, vector, num_states):
     with open(str(settings.BASE_DIR) + '/words.pkl', 'rb') as file:
         words = pickle.load(file)
     state_nums = []
+    avg_prob = 0
     for i in range(num_states):
         state_nums.append(str(i+1))
     state_nums.append("end")
     words.update_word({word_name: [vector]}, state_nums)
     states, probability = multidimensional_viterbi(vector, words.states, words.prior_probs, words.transition_probs,
                                                    words.emission_paras)
-    if states[0][:-1] != word_name:
-        probability = -1
-    return probability
+    for word in words.all_words:
+        w, p = words.check_word(words.all_words[word][0], prob=True)
+        if w == word:
+            avg_prob += p
+        else:
+            avg_prob = -1
+            break
+    # if states[0][:-1] != word_name:
+    #     probability = -1
+    return avg_prob
