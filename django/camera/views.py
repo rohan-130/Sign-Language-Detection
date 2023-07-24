@@ -2,23 +2,10 @@ from django.shortcuts import render
 import pickle
 from rest_framework import status
 from rest_framework.response import Response
-
-from .convert import multidimensional_viterbi
-from .input_words import WordsSerializer, InputSerializer
+from .input_words import WordsSerializer, InputSerializer, Input
 from rest_framework.decorators import api_view
 from django.conf import settings
 from .words import Words
-
-
-
-'''
-words = Words()
-with open('/Users/rohan/Documents/sign-language-recognition/django/words.pkl', 'wb') as file:
-    pickle.dump(words, file)
-words = Words()
-words.num_dimensions = 12
-with open('/Users/rohan/Documents/sign-language-recognition/django/words1.pkl', 'wb') as file:
-    pickle.dump(words, file)'''
 
 
 def test_cam(request):
@@ -33,7 +20,6 @@ def train_cam(request):
 def get_all_words(request):
     with open(str(settings.BASE_DIR) + '/words.pkl', 'rb') as file:
         words = pickle.load(file)
-    # words.update_old_state_nums()
     return Response(WordsSerializer(words).data, status=status.HTTP_200_OK)
 
 
@@ -99,8 +85,6 @@ def check_new_probability(word_name, vector, num_states):
         state_nums.append(str(i+1))
     state_nums.append("end")
     words.update_word({word_name: [vector]}, state_nums)
-    states, probability = multidimensional_viterbi(vector, words.states, words.prior_probs, words.transition_probs,
-                                                   words.emission_paras)
     for word in words.all_words:
         w, p = words.check_word(words.all_words[word][0], prob=True)
         if w == word:
@@ -108,6 +92,4 @@ def check_new_probability(word_name, vector, num_states):
         else:
             avg_prob = -1
             break
-    # if states[0][:-1] != word_name:
-    #     probability = -1
     return avg_prob

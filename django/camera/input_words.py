@@ -1,9 +1,17 @@
 from rest_framework import serializers
 
+
+def convert_vector_to_int_list(vector, count):
+    for i in range(count):
+        vector[i] = int(vector[i])
+    return vector
+
+
 class Input:
-    def __init__(self, vector, count):
-        self.vector = vector
+    def __init__(self, wordName, count, vector):
+        self.wordName = wordName
         self.count = count
+        self.vector = convert_vector_to_int_list(vector)
 
 
 class WordsSerializer(serializers.Serializer):
@@ -17,5 +25,9 @@ class WordsSerializer(serializers.Serializer):
 
 
 class InputSerializer(serializers.Serializer):
-    vector = serializers.ListField()
+    wordName = serializers.StringRelatedField()
     count = serializers.IntegerField()
+    vector = serializers.ListField()
+
+
+
