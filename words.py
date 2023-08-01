@@ -143,10 +143,3 @@ class Words:
         if states:
             return s
         return s[0][:-1]
-
-
-'''
-words = Words()
-with open('words.pkl', 'wb') as file1:
-    pickle.dump(words, file1, pickle.HIGHEST_PROTOCOL)
-'''
