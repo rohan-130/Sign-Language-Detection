@@ -63,7 +63,7 @@ def test_words(wait_time=3, train_time=4, pickle_file="words.pkl"):
     try:
         cap = cv2.VideoCapture(1)
     except Exception as e:
-        cap = cv2.VideoCapture(0)
+        cap = cv2.VideoCapture(1)
     tracker = HandTracker()
     start_time = None
     new_result = []
@@ -73,6 +73,8 @@ def test_words(wait_time=3, train_time=4, pickle_file="words.pkl"):
         success, image = cap.read()
         image = tracker.hands_finder(image)
         lmList = tracker.position_finder(image)
+        if answer != "None":
+            answer = answer
         cv2.putText(image, str(answer), (50, 200), 0, 1, (0, 0, 255), 2, cv2.LINE_AA)
         if len(lmList) == 0:
             start_time = None
@@ -103,4 +105,12 @@ def test_words(wait_time=3, train_time=4, pickle_file="words.pkl"):
         cv2.waitKey(1)
 
 
-# test_words(wait_time=3, train_time=4, pickle_file="words.pkl")
+word = Words()
+'''with open('words.pkl', 'wb') as file:
+    words = pickle.dump(word, file)'''
+
+# train_word('phone', wait_time=1, train_time=3, num_iterations=2, pickle_file="words.pkl")
+# train_word('stereo', wait_time=1, train_time=3, num_iterations=2, pickle_file="words.pkl")
+# train_word('hello', wait_time=1, train_time=3, num_iterations=1, pickle_file="words.pkl")
+# train_word('giraffe', wait_time=1, train_time=3, num_iterations=1, pickle_file="words.pkl")
+test_words(wait_time=1, train_time=3, pickle_file="words.pkl")

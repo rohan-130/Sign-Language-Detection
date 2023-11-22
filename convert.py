@@ -3,13 +3,22 @@ import numpy as np
 import math
 
 
-def gaussian_prob(x, para_tuple):
+def gaussian_prob_OLD(x, para_tuple):
     if list(para_tuple) == [None, None]:
         return 0.0
 
     mean, std = para_tuple
     gaussian_percentile = (2 * np.pi * std ** 2) ** -0.5 * np.exp(-(x - mean) ** 2 / (2 * std ** 2))
     return gaussian_percentile
+
+def gaussian_prob(x, para_tuple):
+    if list(para_tuple) == [None, None]:
+        return 0.0
+
+    mean, std = para_tuple
+    gaussian_percentile = (2 * np.pi * (std+0.01) ** 2) ** -0.5 * np.exp(-(x - mean) ** 2 / (2 * (std+0.01) ** 2))
+    return gaussian_percentile
+
 
 
 def viterbi(evidence_vector, states, prior_probs, transition_probs, emission_paras):
@@ -192,7 +201,7 @@ def sd1(a):
     return round(statistics.pstdev(new_list), 3)
 
 
-def convert(a, prev_avg=None, prev_sd=None, iterations=0):
+def convert_OLD(a, prev_avg=None, prev_sd=None, iterations=0):
     avg = [average(a_i) for a_i in a]
     sd = [sd1(a_i) for a_i in a]
 
@@ -215,6 +224,53 @@ def convert(a, prev_avg=None, prev_sd=None, iterations=0):
             if boundary == 0:
                 for n in a[index + 1][i][:]:
                     if (abs(n - avg[index + 1]) / sd[index + 1]) > (abs(n - avg[index]) / sd[index]):
+                        boundary += 1
+                    else:
+                        break
+                if boundary > 0:
+                    for z in range(boundary):
+                        if len(a[index + 1][i]) > 1:
+                            a[index][i] = a[index][i] + a[index + 1][i][:1]
+                            a[index + 1][i] = a[index + 1][i][1:]
+
+    return convert(a, prev_avg=avg, prev_sd=sd, iterations=iterations + 1)
+
+
+def convert(a, prev_avg=None, prev_sd=None, iterations=0):
+    avg = [average(a_i) for a_i in a]
+    sd = [sd1(a_i) for a_i in a]
+
+    if prev_avg == avg and prev_sd == sd:
+        return a, avg, sd, iterations
+
+    for index in range(len(a) - 1):
+        for i in range(len(a[index])):
+            boundary = 0
+            for n in a[index][i][::-1]:
+                if sd[index] == 0 and sd[index + 1] != 0:
+                    boundary += 1
+                elif sd[index + 1] == 0 and sd[index] != 0:
+                    break
+                elif sd[index + 1] == 0 and sd[index] == 0:
+                    break
+                elif (abs(n - avg[index]) / sd[index]) > (abs(n - avg[index + 1]) / sd[index + 1]):
+                    boundary += 1
+                else:
+                    break
+            if boundary > 0:
+                for z in range(boundary):
+                    if len(a[index][i]) > 1:
+                        a[index + 1][i] = a[index][i][(len(a[index][i]) - 1):] + a[index + 1][i]
+                        a[index][i] = a[index][i][:(len(a[index][i]) - 1)]
+            if boundary == 0:
+                for n in a[index + 1][i][:]:
+                    if sd[index] == 0 and sd[index + 1] != 0:
+                        boundary += 1
+                    elif sd[index + 1] == 0 and sd[index] != 0:
+                        break
+                    elif sd[index + 1] == 0 and sd[index] == 0:
+                        break
+                    elif (abs(n - avg[index + 1]) / sd[index + 1]) > (abs(n - avg[index]) / sd[index]):
                         boundary += 1
                     else:
                         break
