@@ -273,3 +273,15 @@ def divide2(evidence_vectors, num_states):
         for i in range(num_states):
             result[i] += [vector[index[i]:index[i+1]]]
     return result
+
+
+def divide_into_num_states(evidence_vectors, num_states=4):
+    result = [[]]*num_states
+    for vector in evidence_vectors:
+        initial_state_len = int(len(vector) / num_states)
+        for i in range(num_states):
+            if i == (num_states - 1):
+                result[i] = result[i] + [vector[initial_state_len * i:]]
+            else:
+                result[i] = result[i] + [vector[initial_state_len*i:initial_state_len*(i+1)]]
+    return result

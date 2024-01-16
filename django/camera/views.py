@@ -46,6 +46,8 @@ def check_word(request):
         coordinates = request.GET.getlist("vector["+str(i)+"][]")
         vector.append((float(coordinates[0]), float(coordinates[1])))
     vector = vector[:-1]
+    print("VECTOR::::")
+    print(vector)
     result = words.check_word(evidence_vector=vector, states=False)
     print(vector)
     print("WORD:", result)
@@ -57,6 +59,7 @@ def train_word(request):
     with open(str(settings.BASE_DIR) + '/words.pkl', 'rb') as file:
         words = pickle.load(file)
     word_name = request.data.get('wordName')
+    numStates = request.data.get('numStates')
     count = int(request.data.get('count'))
     vector = []
     for i in range(count):
@@ -64,7 +67,7 @@ def train_word(request):
         vector.append((float(coordinates[0]), float(coordinates[1])))
     vector = vector[:-1]
     try:
-        words.update_word({word_name: [vector]})
+        words.update_word({word_name: [vector]}, numStates)
         success = word_name + " trained " + str(len(words.all_words[word_name])) + " times"
         with open(str(settings.BASE_DIR) + '/words.pkl', 'wb') as file:
             pickle.dump(words, file)

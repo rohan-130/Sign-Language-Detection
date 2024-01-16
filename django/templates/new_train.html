@@ -128,10 +128,11 @@
                 }
                 console.log(landmarksArray);
                 var wordName = document.getElementById("wordName").value;
+                var numStates = document.getElementById("numStates").value;
                 $.ajax({
                    type: 'POST',
                    url: 'http://127.0.0.1:8000/train-word/',
-                   data: { vector: landmarksArray, count: newCount, wordName: wordName  },
+                   data: { vector: landmarksArray, count: newCount, wordName: wordName, numStates: numStates  },
                    success: function(res){
                            console.log(res);
                            var element = document.getElementById("para");
@@ -172,9 +173,11 @@
             <div style="position: absolute; height: 640px; margin-top: 1.5%; width: 480px; margin-left: 63.5%;">
                 <p id="info" style="color: #B2BEB5; font-size: 20px; text-align: center; margin-top: 0%; color: light-grey;">not detected</p>
                 <p id="para" style="color: #B2BEB5; font-size: 40px; text-align: center; margin-top: 55%;">train</p>
-            </div>
-            <input id="wordName" type="text" placeholder="Word Name" style="position: absolute; margin-top: 40%; margin-left: 65%; padding: 15px; border-radius: 0px; border: 0; width: 407px; font-family: monospace; background-color: #B2BEB5;">
-            <button id="webcamButton" style="cursor: pointer; color: #B2BEB5; position: absolute; margin-top: 40%; margin-left: 87%; padding: 15px; border-radius: 0px; font-family: monospace; background-color: #2F4F4F; border: 0;">
+            </div>407
+            <input id="wordName" type="text" placeholder="Word Name" style="position: absolute; margin-top: 43%; margin-left: 61%; padding: 15px; border-radius: 0px; border: 0; width: 250px; font-family: monospace; background-color: #B2BEB5;">
+            <input id="numStates" type="number" placeholder="States" style="position: absolute; margin-top: 43%; margin-left: 80.5%; padding: 15px; border-radius: 0px; border: 0; width: 65px; font-family: monospace; background-color: #B2BEB5;">
+
+            <button id="webcamButton" style="cursor: pointer; color: #B2BEB5; position: absolute; margin-top: 43%; margin-left: 87%; padding: 15px; border-radius: 0px; font-family: monospace; background-color: #2F4F4F; border: 0;">
               Enable Webcam
             </button>
         </div>
