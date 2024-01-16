@@ -46,11 +46,7 @@ def check_word(request):
         coordinates = request.GET.getlist("vector["+str(i)+"][]")
         vector.append((float(coordinates[0]), float(coordinates[1])))
     vector = vector[:-1]
-    print("VECTOR::::")
-    print(vector)
     result = words.check_word(evidence_vector=vector, states=False)
-    print(vector)
-    print("WORD:", result)
     return Response({'word': result}, status=status.HTTP_200_OK)
 
 

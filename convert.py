@@ -235,7 +235,7 @@ def convert_OLD(a, prev_avg=None, prev_sd=None, iterations=0):
 
     return convert(a, prev_avg=avg, prev_sd=sd, iterations=iterations + 1)
 
-
+# [[123],[456],[789]]
 def convert(a, prev_avg=None, prev_sd=None, iterations=0):
     avg = [average(a_i) for a_i in a]
     sd = [sd1(a_i) for a_i in a]
@@ -293,3 +293,20 @@ def divide(evidence_vectors):
         result[1] += [vector[index_1:index_2]]
         result[2] += [vector[index_2:]]
     return result
+
+
+'''
+    Four States
+'''
+
+def divide_into_num_states(evidence_vectors, num_states=4):
+    result = [[]]*num_states
+    for vector in evidence_vectors:
+        initial_state_len = int(len(vector) / num_states)
+        for i in range(num_states):
+            if i == (num_states - 1):
+                result[i] = result[i] + [vector[initial_state_len * i:]]
+            else:
+                result[i] = result[i] + [vector[initial_state_len*i:initial_state_len*(i+1)]]
+    return result
+
