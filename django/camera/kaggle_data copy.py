@@ -56,32 +56,45 @@ test_words = {}
 train_words = {}
 
 words = Words()
-words.num_dimensions = 8
+words.num_dimensions = 4
 
 word_names = ['flower', 'mitten', 'bird', 'time', 'vacuum',]
 # 'flower', 'mitten', 'bird']
 # word_names = ['all', 'animal', 'another', 'any', 'apple']
-word_names = ['flower', 'mitten', 'vacuum', 'cloud', 'duck']   # total accuracy: 100.0 - [3, 3, 3, 3, 3] : 100.0
-word_names = ['puzzle', 'minemy', 'vacuum', 'cloud', 'duck']  # total accuracy: 93.33333333333333 - [3, 3, 3, 3, 3]
-
+word_names = ['bird', 'time', 'vacuum', 'puzzle', 'minemy', 'flower', 'mitten']   # total accuracy: 100.0 - [3, 3, 3, 3, 3] : 100.0
+# word_names = ['puzzle', 'minemy', 'vacuum', 'cloud', 'duck']  # total accuracy: 93.33333333333333 - [3, 3, 3, 3, 3]
+word_names = ['help', 'dad', 'please']
+# word_names = ['animal', 'boy', 'another', 'alligator']
+word_names = ['flower', 'dad', 'frog', 'giraffe', 'animal']
+num_left_right = {}
 for word_name in word_names:
-    filenames = next(walk('trained_landmark_files/{0}'.format(word_name)), (None, None, []))[2]
-    # filenames = next(walk('/Users/rohan/Downloads/processed_250_signs_hands/train/{0}'.format(word_name)), (None, None, []))[2]  # [] if no file
+    num_left_right[word_name] = [0, 0]  # left, right
+#vacuum,
+for word_name in word_names:
+    # filenames = next(walk('trained_landmark_files/{0}'.format(word_name)), (None, None, []))[2]
+    filenames = next(walk('/Users/rohan/Downloads/processed_250_signs_hands/train/{0}'.format(word_name)), (None, None, []))[2]  # [] if no file
     print(filenames)
     for filename in filenames:
-        a = pd.read_parquet('trained_landmark_files/{0}/{1}'.format(word_name, filename), engine='pyarrow')
-        # a = pd.read_parquet('/Users/rohan/Downloads/processed_250_signs_hands/train/{0}/{1}'.format(word_name, filename), engine='pyarrow')
+        # a = pd.read_parquet('trained_landmark_files/{0}/{1}'.format(word_name, filename), engine='pyarrow')
+        a = pd.read_parquet('/Users/rohan/Downloads/processed_250_signs_hands/train/{0}/{1}'.format(word_name, filename), engine='pyarrow')
+        # a.to_csv('csv_files_new/'+word_name+filename+'.csv')
         df = a.loc[a['type'] == 'right_hand']
         df_left = a.loc[a['type'] == 'left_hand']
+        '''print("before")
+        print(df)
+        # df = df.loc[df['frame'] == 21]
+        print("after")
+        newdf = df.isnull()['x']
+        print("after")
+        break'''
         # nose_tip_x = (a.loc[a['type'] == 'face'])['x'][1]
         # nose_tip_y = (a.loc[a['type'] == 'face'])['y'][1]
         df = df.dropna()
         df_left = df_left.dropna()
-        if df.empty:
-            continue
+        if word_name in ['dad', 'giraffe', 'flower', 'animal']:
+            df = df_left
         print("new:")
-        print((1-df_left.empty) * ("LEFT: "+word_name))
-        print((1-df.empty) * ("RIGHT: "+word_name))
+        print((1-df_left.empty) * ("LEFT: "+word_name), (1-df.empty) * ("RIGHT: "+word_name))
         frames = pd.unique(df['frame'])
         new_list = []
         for j in range(len(frames)):
@@ -91,15 +104,15 @@ for word_name in word_names:
             new_x_values = [
                 # nose_tip_x - x_values[0],
                 x_values[0],
-                x_values[4] - x_values[0],
-                x_values[12] - x_values[0],
+                # x_values[4] - x_values[0],
+                # x_values[12] - x_values[0],
                 x_values[20] - x_values[0],
             ]
             new_y_values = [
                 # nose_tip_y - y_values[0],
                 y_values[0],
-                y_values[4] - y_values[0],
-                y_values[12] - y_values[0],
+                # y_values[4] - y_values[0],
+                # y_values[12] - y_values[0],
                 y_values[20] - y_values[0],
             ]
             x_values = new_x_values
@@ -110,7 +123,7 @@ for word_name in word_names:
             train_words[word_name] = []
         if new_list != []:
             train_words[word_name].append(new_list)
-        if len(train_words[word_name]) > 150:
+        if len(train_words[word_name]) > 100:
             break
 
 '''for i in range(len(train_files)):
@@ -129,8 +142,7 @@ for word_name in word_names:
         train_words[word_names[i]] = []
     train_words[word_names[i]].append(new_list)'''
 
-num_states1 = [3,3,2,2,3]
-num_states1 = [3,3,3,3,3]
+num_states1 = [3,3,3,3,2]
 
 count = 0
 for word in train_words:
@@ -170,7 +182,63 @@ for word_name in word_names:
 
 print("TESTWORDS:")
 print(test_words)'''
-test_words = train_words
+# test_words = train_words
+test_words = {}
+for word_name in word_names:
+    # filenames = next(walk('trained_landmark_files/{0}'.format(word_name)), (None, None, []))[2]
+    filenames = next(walk('/Users/rohan/Downloads/processed_250_signs_hands/test/{0}'.format(word_name)), (None, None, []))[2]  # [] if no file
+    print(filenames)
+    for filename in filenames:
+        # a = pd.read_parquet('trained_landmark_files/{0}/{1}'.format(word_name, filename), engine='pyarrow')
+        a = pd.read_parquet('/Users/rohan/Downloads/processed_250_signs_hands/test/{0}/{1}'.format(word_name, filename), engine='pyarrow')
+        # a.to_csv('csv_files_new/'+word_name+filename+'.csv')
+        df = a.loc[a['type'] == 'right_hand']
+        df_left = a.loc[a['type'] == 'left_hand']
+        '''print("before")
+        print(df)
+        # df = df.loc[df['frame'] == 21]
+        print("after")
+        newdf = df.isnull()['x']
+        print("after")
+        break'''
+        # nose_tip_x = (a.loc[a['type'] == 'face'])['x'][1]
+        # nose_tip_y = (a.loc[a['type'] == 'face'])['y'][1]
+        df = df.dropna()
+        df_left = df_left.dropna()
+        if word_name in ['dad', 'giraffe', 'flower', 'animal']:
+            df = df_left
+        print("new:")
+        print((1-df_left.empty) * ("LEFT: "+word_name), (1-df.empty) * ("RIGHT: "+word_name))
+        frames = pd.unique(df['frame'])
+        new_list = []
+        for j in range(len(frames)):
+            frame_df = df.loc[df['frame'] == frames[j]]
+            x_values = list(frame_df['x'][:21])
+            y_values = list(frame_df['y'][:21])
+            new_x_values = [
+                # nose_tip_x - x_values[0],
+                x_values[0],
+                # x_values[4] - x_values[0],
+                # x_values[12] - x_values[0],
+                x_values[20] - x_values[0],
+            ]
+            new_y_values = [
+                # nose_tip_y - y_values[0],
+                y_values[0],
+                # y_values[4] - y_values[0],
+                # y_values[12] - y_values[0],
+                y_values[20] - y_values[0],
+            ]
+            x_values = new_x_values
+            y_values = new_y_values
+            dimensions = x_values + y_values
+            new_list.append(dimensions)
+        if word_name not in test_words:
+            test_words[word_name] = []
+        if new_list != []:
+            test_words[word_name].append(new_list)
+        if len(test_words[word_name]) > 1000:
+            break
 
 '''for i in range(len(test_files)):
     a = pd.read_parquet('trained_landmark_files/{0}.parquet'.format(test_files[i]), engine='pyarrow')
@@ -218,26 +286,13 @@ except:
 print(correct_total)
 print(total_total)
 
-
 '''
+- dominant hand for data from kaggle - accuracy 82 percent with 8 dimensions
 
 
-- i’m now using relative positions of the palm from the nose and fingers from the palm and it works better
-- the program doesn’t let me train more than 100 samples for a word because of a recursive limit. So I’m trying to convert the recursive function to a loop using my own stack
-
-- the clean data wasn’t working as well, but i think that’s because i still need to figure out which one is the dominant hand
-- how do i check which hand is dominant? Both hands have x,y positions in the clean data, so I’m not sure which one I should use
 
 
-3,3,3,3: 50%
-[4, 3, 3, 3] : 25.0
-[3, 5, 3, 3] : 100.0
-[]
-apple: 
-flower: 
-lips: 3
-mitten: 3
-there: 
+
 
 time, vacuum, flower, mitten, 
 
